@@ -1,0 +1,150 @@
+@import "helpers";
+$boxMargin: 10px;
+$borderRadius: 6px;
+$tile-color: #eee4da;
+$tile-gold-color: #edc22e;
+$tile-gold-glow-color: lighten($tile-gold-color, 15%);
+$transition-speed: 100ms;
+$bright-text-color: #f9f6f2;
+$base: 2;
+$exponent: 1;
+$limit: 15;
+
+
+h1.title {
+  font-size: 80px;
+  font-weight: bold;
+  margin: 0;
+  display: contents;
+}
+
+
+// Colors for all 11 states, false = no special color
+$special-colors: false false, // 2
+                 false false, // 4
+                 #f78e48 true, // 8
+                 #fc5e2e true, // 16
+                 #ff3333 true, // 32
+                 #ff0000 true, // 64
+                 false true, // 128
+                 false true, // 256
+                 false true, // 512
+                 false true, // 1024
+                 false true, // 2048
+                 false true, // 4096
+                 false true, // 2048
+                 false true, // 2048
+                 false true; // 2048
+
+.grid{
+    position: absolute;
+    background-color:#bbada0;
+    border-radius: $borderRadius;
+
+    padding:$boxMargin ;
+    width: fit-content;
+    display: grid;
+    grid-column-gap: $boxMargin;
+    grid-row-gap: $boxMargin;
+    bottom:20px;
+}
+
+.tiles{
+    position: absolute;
+    padding:$boxMargin ;
+}
+
+.tile{
+    border-radius:$borderRadius;
+    background-color: #eee4da;
+    color:#5e554c;
+    position: absolute;
+    justify-items: center;
+    align-items:   center;
+    margin:$boxMargin;
+    top:0px;
+    left:0px;
+    transition: 100ms ease-in-out;
+    font-weight: bold;
+    animation-fill-mode: backwards;
+}
+
+.box{
+    border-radius: $borderRadius;
+    background: rgba($tile-color, .25);
+    width: 100%;
+    height: 100%;
+}
+
+// Build tile colors
+@while $exponent <= $limit {
+  $power: pow($base, $exponent);
+
+  &.tile-#{$power} {
+
+    // Calculate base background color
+    $gold-percent: ($exponent - 1) / ($limit - 1) * 100;
+    $mixed-background: mix($tile-gold-color, $tile-color, $gold-percent);
+
+    $nth-color: nth($special-colors, $exponent);
+
+    $special-background: nth($nth-color, 1);
+    $bright-color: nth($nth-color, 2);
+
+    @if $special-background {
+      $mixed-background: mix($special-background, $mixed-background, 55%);
+    }
+
+    @if $bright-color {
+      color: $bright-text-color;
+    }
+
+    // Set background
+    background: $mixed-background;
+
+    // Add glow
+    $glow-opacity: max($exponent - 4, 0) / ($limit - 4);
+
+    @if not $special-background {
+      box-shadow: 0 0 30px 10px rgba($tile-gold-glow-color, $glow-opacity / 1.8),
+                  inset 0 0 0 1px rgba(white, $glow-opacity / 3);
+    }
+  }
+
+  $exponent: $exponent + 1;
+}
+
+
+@keyframes pop {
+    0% { transform : scale(1);}
+    50% { transform : scale(1.2);}
+    100% {transform : scale(1);}
+  }
+
+@keyframes appear {
+  0% {
+    opacity: 0;
+    transform : scale(0);
+  }
+  100% {
+    opacity: 1;
+    transform :scale(1);
+  }
+}
+  
+.tile-new{
+  animation : appear 300ms ease $transition-speed;
+  animation-fill-mode: backwards;
+  
+}
+
+.tile-merged  {
+    z-index: 290;
+    animation :pop 200ms ease-in $transition-speed ;
+    animation-fill-mode: backwards;
+  }
+
+.tile-delete{
+    opacity: 0.5;
+}
+
