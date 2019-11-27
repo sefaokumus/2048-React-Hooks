@@ -1,9 +1,9 @@
 import React, {useState, useEffect, forwardRef, useImperativeHandle} from 'react';
 import {Swipeable} from 'react-swipeable'
 import Swal from 'sweetalert2'
-import './Board.scss';
 import ActiveTiles from './ActiveTiles'
 import Grid from './../classes/Grid'
+import './Board.scss';
 
 const Board = forwardRef((params, ref) => {
     const {colCount, rowCount, boxSize, boxMargin} = params
@@ -15,12 +15,13 @@ const Board = forwardRef((params, ref) => {
     useEffect(() => {
         setGrid((prev) => {
             let newGrid=Object.create(prev.setBoxSize(boxSize))
-            newGrid.cacheThis()
             return newGrid;
         });
     },[boxSize])
    
-    useEffect(() => { params.updateScores({score :grid.score, highscore:grid.highscore})},[grid.score,grid.highscore])
+    useEffect(() => { 
+        params.updateScores({score :grid.score, highscore:grid.highscore})
+    },[grid.score,grid.highscore])
     
     useEffect(() => {
         if(grid.won) 
@@ -85,7 +86,6 @@ const Board = forwardRef((params, ref) => {
             
         setGrid(prev => {
             let newGrid=new Grid({colCount,rowCount,boxSize})
-            newGrid.cacheThis()
             return newGrid;
         })
     }
@@ -93,7 +93,6 @@ const Board = forwardRef((params, ref) => {
         if(grid.activeTiles().length>2)
             setGrid((prev) => {
                 let newGrid=Object.create(prev.undo())
-                    newGrid.cacheThis()
                     return newGrid;
             });
     }
@@ -101,7 +100,6 @@ const Board = forwardRef((params, ref) => {
 
         setGrid((prev) => {
             let newGrid=Object.create(prev.move(direction))
-            newGrid.cacheThis()
             return newGrid;
         });
     }
@@ -134,6 +132,7 @@ const Board = forwardRef((params, ref) => {
         let cache = JSON.parse(localStorage.getItem(rowCount + 'x' + colCount + '-grid'))
         localStorage.setItem(rowCount + 'x' + colCount + '-grid', JSON.stringify({highscore : cache.highscore}))
     }
+
       return (
           <Swipeable
               onSwipedRight={() => move(0)}
@@ -142,7 +141,9 @@ const Board = forwardRef((params, ref) => {
               onSwipedUp={() => move(3)}>
               
             <div className='grid' style={ grid ? {...grid.inlineStyle(boxMargin)} : null} >
-                { Array(colCount * rowCount).fill(0).map((box,i) => <div key={i} className='box'></div>)}
+                {
+                    Array(colCount * rowCount).fill(0).map((box,i) => <div key={i} className='box'></div>)
+                }
                 <ActiveTiles grid={grid} boxMargin={boxMargin}/>
             </div>
         </Swipeable>

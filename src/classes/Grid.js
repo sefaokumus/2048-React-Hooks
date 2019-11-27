@@ -23,6 +23,7 @@ class Grid {
         }
         this.won=false
         this.lost=false
+        this.cacheThis()
     }
     activeTiles() {
         return [].concat(...this.tiles).filter(tile => tile!==null)
@@ -128,6 +129,7 @@ class Grid {
         else
             this.lost=true
         
+        this.cacheThis()
         return this
     }
     moveRight(matrix) {
@@ -189,6 +191,7 @@ class Grid {
             }
             )
         )
+        this.cacheThis()
         return this
     }
     addToHistory() {
@@ -216,6 +219,7 @@ class Grid {
             this.score=historyObj.score
             this.highscore=historyObj.highscore
             this.setPositions()
+            this.cacheThis()
             return this
         }
         return null
