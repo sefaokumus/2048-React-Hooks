@@ -1,1 +1,11 @@
-node_modules
+/build
+/.firebase
+/node_modules
+
+
+
+my-credentials
+.firebaserc
+firebase.json
+
+*.log
